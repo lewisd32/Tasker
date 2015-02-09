@@ -155,6 +155,15 @@ Task* _scheduleWhen(struct Tasks& tasks, TaskFunc func, void* state, bool& whenV
   return &task;
 }
 
+Task* _scheduleUntil(struct Tasks& tasks, TaskFunc func, void* state, bool& untilVar) {
+  Task& task = *findEmptyTaskSlot(tasks);
+  task.func = func;
+  task.state = state;
+  task.schedule.type = UNTIL;
+  task.schedule.whenVar = &untilVar;
+  return &task;
+}
+
 /***************************************************************
  * Sleep 
  ***************************************************************/
