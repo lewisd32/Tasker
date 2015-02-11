@@ -33,12 +33,12 @@ int32_t getTimeUntilExecution(struct Task& task, uint32_t now) {
       return schedule.periodic.requestedNextExecutionTimeUs - now;
       break;
     case UNTIL:
-      if (*schedule.when.whenVar) {
+      if (!*schedule.when.whenVar) {
         return 0;
       }
       break;
     case WHEN:
-      if (!*schedule.when.whenVar) {
+      if (*schedule.when.whenVar) {
         return 0;
       }
       break;
@@ -101,11 +101,13 @@ void execTask(struct Task& task) {
   uint32_t taskExecutedTimeUs = micros();
 
   ScheduleType scheduleType = task.schedule.type;
-  // If it's not a periodic task, don't execute it again without rescheduling.
-  if (scheduleType != PERIODIC) {
+  // If it's not a periodic task, or a task with a bool flag, don't execute
+  // it again without rescheduling.
+  if (scheduleType != PERIODIC && scheduleType != WHEN && scheduleType != UNTIL) {
     task.schedule.type = NONE;
   }
 
+  // FIXME: move the delay loop here so timing is more accurate.
   // Execute the task, passing in the task struct and it's state.
   task.func(task, task.state);
 
@@ -260,7 +262,7 @@ void syncSleepMillis(uint16_t milliseconds) {
 void sleepUntil(bool& untilVar) {
   if (currentTaskInfo.task) {
     TaskSchedule& schedule = currentTaskInfo.task->schedule;
-    schedule.type = UNTIL;
+    schedule.type = WHEN;
     schedule.when.whenVar = &untilVar;
   } else {
     serWarnln("Cannot call sleepUntil outside of a task");
@@ -270,7 +272,7 @@ void sleepUntil(bool& untilVar) {
 void sleepWhen(bool& whenVar) {
   if (currentTaskInfo.task) {
     TaskSchedule& schedule = currentTaskInfo.task->schedule;
-    schedule.type = WHEN;
+    schedule.type = UNTIL;
     schedule.when.whenVar = &whenVar;
   } else {
     serWarnln("Cannot call sleepWhen outside of a task");
