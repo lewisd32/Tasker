@@ -58,7 +58,7 @@ struct Task {
 
 struct Tasks {
   Task* tasks;
-  int maxTasks;
+  uint8_t maxTasks;
 };
 
 const void* const NO_STATE = NULL;
