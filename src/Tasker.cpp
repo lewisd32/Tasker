@@ -1,5 +1,5 @@
 #include <Tasker.h>
-#include "debug.h"
+#include "internal/debug.h"
 
 // TODO I'm not sure why the Arduino IDE compiler keeps warning about this.
 const uint32_t MAX_LONG = 4294967295;
