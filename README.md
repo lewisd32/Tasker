@@ -1,9 +1,7 @@
 # Tasker
 Task scheduling library for Arduino
 
-# INCOMPLETE
-## Use at your own risk.
-## This code is not yet heavily tested.
+**This library is not heavily tested yet.**
 
 ## What is Tasker?
 
@@ -23,8 +21,17 @@ state.
 
 ### Installation
 
-(TBD: Write something about downloading a zip from github, and installing it in the
-Arduino libraries folder.)
+You can download the latest Tasker here:
+https://github.com/lewisd32/Tasker/archive/master.zip
+
+To install it:
+
+1. Create a folder called "libraries" inside your Arduino sketch folder.
+  * You can find out where your Arduino sketch folder is by going to "File > Preferences" in the Arduino IDE,
+and looking for the "Sketchbook location".
+1. Extract the file you downloaded into the "libraries" folder.
+1. This should have created a new folder called "Tasker-master".  Rename this to "Tasker".
+1. This should now show up in the Arduino IDE (after restarting it) as a library called "Tasker".
 
 ### Initial Setup
 
@@ -155,7 +162,7 @@ Task* counterTask = scheduleUntil(tasks, counterTaskFunc, counterTaskState, wait
 
 **NOTE**: 'until' is a really bad name for this.  It's really 'when not'.
 
-#### Sleeping within the task.
+### Sleeping within the task.
 
 The usual pattern followed in simple Arduino code goes something like this:
 ```
@@ -238,9 +245,9 @@ fashion, using a finite-state-machine.  However, I couldn't find a task schedule
 library that did all the things I wanted to do.  In the spirit of NIH (actually,
 I just thought it would be fun to try writing my own) I decided to write one.
 
-# Time Math
+### Time Math
 
-## Simple comparison
+#### Simple comparison
 Many libraries I've seen use simple, easy to understand time math like:
 ```
 if (now() >= taskScheduledTime) // it's time to run the task
@@ -275,7 +282,7 @@ https://www.ima.umn.edu/~arnold/disasters/patriot.html
 To avoid this, I'm using a different technique.  Subtraction instead of
 comparison.
 
-## Subtract and Compare to Zero
+#### Subtract and Compare to Zero
 
 The approach I'm using is:
 ```
@@ -311,7 +318,7 @@ above.
 You may be asking "but how much time does it have?" and "does this affect how
 far into the future tasks can be scheduled?"  Those are good questions.
 
-### How much time does the scheduler have to notice the task?
+##### How much time does the scheduler have to notice the task?
 
 Assuming the clock is in microseconds (since this is the worst case),
  if `taskScheduledTime` is 2147483647, then `taskScheduledTime - now() > 0` will
@@ -325,7 +332,7 @@ Assuming the clock is in microseconds (since this is the worst case),
 This means it has 2147483648 microseconds (about 35 minutes) to notice the
 task.
 
-### How far into the future can tasks be scheduled?
+##### How far into the future can tasks be scheduled?
 
 Since the positive and negative side of signed integers is almost symetrical
 (it's off by 1), the answer is the same as the previous question: about 35
@@ -339,6 +346,7 @@ longer, about 24 days.
   * Maybe also remove the millisecond versions, now that the `MS` constant is
  there.
 * Add function to cancel a scheduled task
+* Rename "until".  That's a really bad name for it.
 * Implement priority
   * Tasks that would otherwise be scheduled before a higher priority task, but
 have a max runtime that indicate they wouldn't finish in time for the higher
